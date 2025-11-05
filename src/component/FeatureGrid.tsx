@@ -1,0 +1,115 @@
+"use client";
+
+import { motion } from "framer-motion";
+import {
+  Cpu,
+  Zap,
+  DollarSign,
+  BarChart2,
+  Users2,
+  ShieldCheck,
+  ArrowRight,
+} from "lucide-react";
+
+export default function FeatureGrid() {
+  const features = [
+    {
+      title: "HR Tech",
+      desc: "Automating your employee journey with tools that just work.",
+      icon: <Cpu className="w-5 h-5 text-black" />,
+      href: "https://example.com/hr-tech",
+    },
+    {
+      title: "HR Operations",
+      desc: "Fast, accurate, zero chaos — from onboarding to exits.",
+      icon: <Zap className="w-5 h-5 text-black" />,
+      href: "https://example.com/hr-operations",
+    },
+    {
+      title: "Payroll",
+      desc: "Compliant, on time, and stress-free. Always.",
+      icon: <DollarSign className="w-5 h-5 text-black" />,
+      href: "https://example.com/payroll",
+    },
+    {
+      title: "People Analytics",
+      desc: "Turning workforce data into decisions that move the needle.",
+      icon: <BarChart2 className="w-5 h-5 text-black" />,
+      href: "https://example.com/people-analytics",
+    },
+    {
+      title: "ESOP Services",
+      desc: "Build ownership cultures that drive retention and motivation.",
+      icon: <Users2 className="w-5 h-5 text-black" />,
+      href: "https://example.com/esop-services",
+    },
+    {
+      title: "Mandatory Trainings",
+      desc: "POSH, AML and more — with automated reminders & dashboards.",
+      icon: <ShieldCheck className="w-5 h-5 text-black" />,
+      href: "https://compliance-portal-tau.vercel.app/",
+    },
+  ];
+
+  return (
+    <section id="services" className="py-20">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Section header */}
+        <div className="text-center mb-10">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
+            What We Do
+          </h2>
+          <p className="mt-2 text-sm text-white/70 max-w-2xl mx-auto">
+            Smart. Simple. Scalable — core services that remove friction and scale with your team.
+          </p>
+        </div>
+
+        {/* Grid */}
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {features.map((f) => (
+            <motion.a
+              key={f.title}
+              href={f.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ translateY: -6, scale: 1.01 }}
+              whileTap={{ scale: 0.995 }}
+              transition={{ type: "spring", stiffness: 220, damping: 20 }}
+              className="group relative flex h-full w-full items-start gap-6 rounded-2xl bg-white/5 border border-white/10 p-6 shadow-md backdrop-blur-sm hover:shadow-lg hover:border-red-400/20 transition-all focus:outline-none focus-visible:ring-4 focus-visible:ring-red-400/30"
+            >
+              {/* Icon */}
+              <div className="flex-shrink-0">
+                <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-300 shadow-sm">
+                  {f.icon}
+                </div>
+              </div>
+
+              {/* Text Content */}
+              <div className="flex-1 min-w-0 text-left">
+                <h3 className="text-lg font-semibold text-white leading-tight">
+                  {f.title}
+                </h3>
+                <p className="mt-2 text-sm text-white/70 leading-relaxed">
+                  {f.desc}
+                </p>
+              </div>
+
+              {/* Arrow CTA */}
+              <motion.div
+                className="ml-4 flex items-center justify-center rounded-full bg-white/10 text-white/80 w-9 h-9 group-hover:bg-white/20 transition"
+                whileHover={{ x: 4 }}
+                transition={{ type: "spring", stiffness: 300, damping: 25 }}
+                aria-hidden
+              >
+                <ArrowRight className="w-4 h-4" />
+              </motion.div>
+
+              {/* Accent line */}
+              <span className="absolute left-6 right-6 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-amber-300/40 to-transparent rounded-b-xl" />
+            </motion.a>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}

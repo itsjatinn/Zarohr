@@ -1,6 +1,6 @@
 import Hero from "../component/Hero";
 import FeatureGrid from "../component/FeatureGrid";
-import CTA from "../component/CTA";
+
 
 export default function Page() {
   return (

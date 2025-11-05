@@ -19,9 +19,9 @@ export default function Header() {
 
   const navItems = [
     { name: "Home", href: "/", icon: <Home size={18} /> },
-    { name: "Work With Us", href: "/workwithus", icon: <Briefcase size={18} /> },
-    { name: "Blog", href: "#blog", icon: <Newspaper size={18} /> },
-    { name: "Contact", href: "#contact", icon: <Phone size={18} /> },
+    { name: "Work With Us", href: "/comingsoon", icon: <Briefcase size={18} /> },
+    { name: "Blog", href: "/comingsoon", icon: <Newspaper size={18} /> },
+    { name: "Contact", href: "/comingsoon", icon: <Phone size={18} /> },
   ];
 
   return (
@@ -38,10 +38,10 @@ export default function Header() {
             <Link href="/" className="flex items-center gap-2 group">
               <Target
                 size={28}
-                className="text-amber-300 group-hover:rotate-12 transition-transform"
+                className="text-amber-400 group-hover:rotate-12 transition-transform"
               />
               <span className="text-3xl font-extrabold tracking-tight  transition">
-                Zaro<span className="text-amber-300">HR</span>
+                Zaro<span className="text-amber-400">HR</span>
               </span>
             </Link>
 
@@ -60,7 +60,7 @@ export default function Header() {
               >
                 <Link
                   href={item.href}
-                  className="flex items-center gap-1.5 text-sm font-medium hover:text-amber-300 transition"
+                  className="flex items-center gap-1.5 text-sm font-medium hover:text-amber-400 transition"
                 >
                   {item.icon}
                   {item.name}
@@ -70,8 +70,8 @@ export default function Header() {
 
             <motion.div whileHover={{ scale: 1.08 }} whileTap={{ scale: 0.95 }}>
               <Link
-                href="#contact"
-                className="flex items-center gap-2 px-4 py-2 rounded-md bg-amber-300 text-black font-semibold hover:bg-white transition"
+                href="/comingsoon"
+                className="flex items-center gap-2 px-4 py-2 rounded-md bg-amber-400 text-black font-semibold hover:bg-white transition"
               >
                 <Rocket size={16} /> Get Started
               </Link>
@@ -103,14 +103,14 @@ export default function Header() {
                   key={item.name}
                   href={item.href}
                   onClick={() => setOpen(false)}
-                  className="flex items-center gap-2 hover:text-amber-300 transition"
+                  className="flex items-center gap-2 hover:text-amber-400 transition"
                 >
                   {item.icon}
                   {item.name}
                 </Link>
               ))}
               <Link
-                href="#contact"
+                href="/comingsoon"
                 onClick={() => setOpen(false)}
                 className="flex items-center justify-center gap-2 px-4 py-2 mt-3 rounded-md bg-red-400 text-black font-semibold hover:bg-white transition"
               >

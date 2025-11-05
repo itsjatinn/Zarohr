@@ -222,7 +222,7 @@ export default function Hero() {
                 transition={{ duration: 0.45 }}
               >
                 Zaro
-                <span className="ml-1 text-amber-300 bg-clip-text">HR</span>
+                <span className="ml-1 text-amber-400 bg-clip-text">HR</span>
               </motion.h2>
 
               <motion.p
@@ -252,7 +252,7 @@ export default function Hero() {
             <motion.header variants={itemVariants} className="mb-6">
               <motion.h1 variants={itemVariants} className="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
                 Zaro
-                <span className="ml-1 text-amber-300 bg-clip-text">HR</span>
+                <span className="ml-1 text-amber-400 bg-clip-text">HR</span>
               </motion.h1>
 
               <motion.p variants={itemVariants} className="text-lg sm:text-2xl md:text-2xl font-semibold text-white/95 mt-3 -tracking-wide">
@@ -310,7 +310,7 @@ export default function Hero() {
 
               <button
                 type="submit"
-                className="h-12 px-6 rounded-full bg-amber-300 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-cc-accent/30"
+                className="h-12 px-6 rounded-full bg-amber-400 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-cc-accent/30"
                 aria-pressed={status === "sent"}
               >
                 {status === "sent" ? "Thanks — we'll reach out" : "Get started"}

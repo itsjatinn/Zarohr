@@ -4,8 +4,8 @@ import Header from "../component/Header";
 import Footer from "../component/Footer";
 
 export const metadata = {
-  title: "ClearCut — Landing Clone",
-  description: "Landing page built with Next.js + Tailwind",
+  title: "ZaroHR",
+  description: "cutting through clutter",
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {

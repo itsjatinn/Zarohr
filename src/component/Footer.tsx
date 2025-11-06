@@ -12,19 +12,19 @@ export default function Footer() {
         {/* Right side */}
         <div className="flex items-center gap-6 text-sm">
           <a
-            href="#"
+            href="/comingsoon"
             className="text-slate-500 hover:text-slate-950 transition-colors duration-200"
           >
             Privacy
           </a>
           <a
-            href="#"
+            href="/comingsoon"
             className="text-slate-500 hover:text-slate-950 transition-colors duration-200"
           >
             Terms
           </a>
           <a
-            href="#contact"
+            href="/comingsoon"
             className="text-slate-500 hover:text-slate-950 transition-colors duration-200"
           >
             Contact

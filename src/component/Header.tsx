@@ -11,7 +11,6 @@ import {
   Rocket,
   Menu,
   X,
-  Target, // <-- logo icon
 } from "lucide-react";
 
 export default function Header() {
@@ -36,31 +35,31 @@ export default function Header() {
             className="flex flex-col items-start"
           >
             <Link href="/" className="group">
-  <div className="flex items-center gap-2 md:gap-2">
-    {/* Logo icon */}
-    <Image
-      src="/images/logo.png"
-      alt="ZaroHR Logo"
-      width={44}
-      height={44}
-      className="h-10 w-10 md:h-11 md:w-11 object-contain transition-transform group-hover:scale-[1.03]"
-      priority
-    />
+              <div className="flex items-center gap-1 md:gap-1">
+                {/* Logo icon */}
+                <Image
+                  src="/images/logo.png"
+                  alt="ZaroHR Logo"
+                  width={44}
+                  height={44}
+                  className="h-10 w-10 md:h-11 md:w-11 object-contain transition-transform group-hover:scale-[1.03]"
+                  priority
+                />
 
-    {/* Text + Tagline */}
-    <div className="flex flex-col leading-none">
-      {/* Brand text */}
-      <span className="text-3xl font-extrabold tracking-tight transition text-white">
-        Zaro<span className="text-amber-300">HR</span>
-      </span>
+                {/* Text + Tagline */}
+                <div className="flex flex-col leading-none">
+                  {/* Brand text */}
+                  <span className="text-2xl md:text-3xl font-extrabold tracking-tight transition text-white">
+                    Zaro<span className="text-amber-400">HR</span>
+                  </span>
 
-      {/* Original tagline */}
-      <span className="text-sm font-medium text-white/70 tracking-wide -mt-1">
-        cutting through clutter
-      </span>
-    </div>
-  </div>
-</Link>
+                  {/* Original tagline */}
+                  <span className="text-xs md:text-sm font-medium text-white/70 tracking-wide -mt-1">
+                    cutting through clutter
+                  </span>
+                </div>
+              </div>
+            </Link>
           </motion.div>
 
           {/* Desktop navigation */}
@@ -125,7 +124,7 @@ export default function Header() {
               <Link
                 href="/comingsoon"
                 onClick={() => setOpen(false)}
-                className="flex items-center justify-center gap-2 px-4 py-2 mt-3 rounded-md bg-red-400 text-black font-semibold hover:bg-white transition"
+                className="flex items-center justify-center gap-2 px-4 py-2 mt-3 rounded-md bg-amber-400 text-black font-semibold hover:bg-white transition"
               >
                 <Rocket size={16} /> Get Started
               </Link>

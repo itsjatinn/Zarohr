@@ -20,13 +20,6 @@ function usePrefersReducedMotion() {
   return reduced;
 }
 
-/* -------------------------
-  Hero Component (complete, corrected)
-  - splash blocks visibility of main content until exit animation completes
-  - two paragraphs animate letter-by-letter in sequence, mounting letters over time
-  - form starts flush under heading and is pushed down as letters appear
-  - respects prefers-reduced-motion
---------------------------*/
 export default function Hero() {
   const reducedMotion = usePrefersReducedMotion();
 
@@ -221,8 +214,7 @@ export default function Hero() {
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.45 }}
               >
-                Zaro
-                <span className="ml-1 text-amber-400 bg-clip-text">HR</span>
+                Zaro<span className=" text-amber-400 bg-clip-text">HR</span>
               </motion.h2>
 
               <motion.p
@@ -250,15 +242,22 @@ export default function Hero() {
           <div className="max-w-3xl">
             {/* Headline */}
             <motion.header variants={itemVariants} className="mb-6">
-              <motion.h1 variants={itemVariants} className="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
+              <motion.h1
+                variants={itemVariants}
+                className="text-3xl sm:text-5xl font-extrabold text-white leading-tight"
+              >
                 Zaro
-                <span className="ml-1 text-amber-400 bg-clip-text">HR</span>
+                <span className="text-amber-400 bg-clip-text">HR</span>
               </motion.h1>
 
-              <motion.p variants={itemVariants} className="text-lg sm:text-2xl md:text-2xl font-semibold text-white/95 mt-3 -tracking-wide">
+              <motion.p
+                variants={itemVariants}
+                className="text-lg sm:text-2xl md:text-2xl font-semibold text-white/95 mt-3 -tracking-wide"
+              >
                 Cut Through the Clutter. <span className="hidden sm:inline">Power What’s Next.</span>
               </motion.p>
             </motion.header>
+
 
             {/* Description: two paragraphs — mounted characters grow the paragraph */}
             <motion.div

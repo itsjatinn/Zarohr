@@ -1,5 +1,5 @@
 "use client";
-
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -21,7 +21,7 @@ export default function Header() {
     { name: "Home", href: "/", icon: <Home size={18} /> },
     { name: "Work With Us", href: "/comingsoon", icon: <Briefcase size={18} /> },
     { name: "Blog", href: "/comingsoon", icon: <Newspaper size={18} /> },
-    { name: "Contact", href: "/comingsoon", icon: <Phone size={18} /> },
+    { name: "Contact", href: "/contact", icon: <Phone size={18} /> },
   ];
 
   return (
@@ -30,24 +30,37 @@ export default function Header() {
         <div className="max-w-7xl mx-auto flex items-center justify-between px-4 md:px-8 py-4">
           {/* Logo + Tagline */}
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: -5 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="flex flex-col items-start"
           >
-            <Link href="/" className="flex items-center gap-2 group">
-              <Target
-                size={28}
-                className="text-amber-400 group-hover:rotate-12 transition-transform"
-              />
-              <span className="text-3xl font-extrabold tracking-tight  transition">
-                Zaro<span className="text-amber-400">HR</span>
-              </span>
-            </Link>
+            <Link href="/" className="group">
+  <div className="flex items-center gap-2 md:gap-2">
+    {/* Logo icon */}
+    <Image
+      src="/images/logo.png"
+      alt="ZaroHR Logo"
+      width={44}
+      height={44}
+      className="h-10 w-10 md:h-11 md:w-11 object-contain transition-transform group-hover:scale-[1.03]"
+      priority
+    />
 
-            <span className="text-sm font-medium text-white/70 tracking-wide -mt-1">
-              cutting through clutter
-            </span>
+    {/* Text + Tagline */}
+    <div className="flex flex-col leading-none">
+      {/* Brand text */}
+      <span className="text-3xl font-extrabold tracking-tight transition text-white">
+        Zaro<span className="text-amber-300">HR</span>
+      </span>
+
+      {/* Original tagline */}
+      <span className="text-sm font-medium text-white/70 tracking-wide -mt-1">
+        cutting through clutter
+      </span>
+    </div>
+  </div>
+</Link>
           </motion.div>
 
           {/* Desktop navigation */}

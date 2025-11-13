@@ -113,7 +113,7 @@ export default function ContactPage() {
                   </svg>
                 </div>
                 <div className="text-base font-semibold">Sales Enquiry</div>
-                <a href="tel:+9118002336504" className="mt-0.5 text-lg font-medium text-white hover:underline">
+                <a href="tel:+9118002336504" className="mt-0.5 text-xs font-medium text-white hover:underline">
                   1800-233-6504
                 </a>
               </div>

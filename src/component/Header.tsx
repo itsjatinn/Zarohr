@@ -33,7 +33,8 @@ export default function Header() {
 
   const navItems = [
     { name: "Home", href: "/", icon: <Home size={20} /> },
-    { name: "Work With Us", href: "/comingsoon", icon: <Briefcase size={20} /> },
+    // Updated: link What We Do to the page route /what-we-do
+    { name: "What We Do", href: "/what-we-do", icon: <Briefcase size={20} /> },
     { name: "Blog", href: "/comingsoon", icon: <Newspaper size={20} /> },
     { name: "Contact", href: "/contact", icon: <Phone size={20} /> },
   ];

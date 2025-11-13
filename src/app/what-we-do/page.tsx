@@ -1,9 +1,8 @@
 "use client";
 
 import React, { JSX, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { motion, Variants } from "framer-motion";
-import { Mail, Cpu, Zap, DollarSign, BarChart2, Users2, ShieldCheck, ArrowRight, ArrowRightCircle } from "lucide-react";
+import { Mail, Cpu, Zap, DollarSign, BarChart2, Users2, ShieldCheck, ArrowRight } from "lucide-react";
 
 /* -------------------------
   Small hook: prefers-reduced-motion
@@ -41,10 +40,22 @@ const itemVariants: Variants = {
 
 const externalLink = "https://www.zinghr.com/solutions/workforce-management/";
 
+/* -------------------------
+   Types
+--------------------------*/
+type Feature = {
+  id: string;
+  title: string;
+  desc: string;
+  icon: React.ReactNode;
+  href: string;
+  live?: boolean;
+};
+
 export default function WhatWeDo(): JSX.Element {
   const reducedMotion = usePrefersReducedMotion();
 
-  const features = [
+  const features: Feature[] = [
     {
       id: "hr-tech",
       title: "HR Tech",
@@ -91,14 +102,13 @@ export default function WhatWeDo(): JSX.Element {
   ];
 
   /* -------------------------
-    Paragraph reveal (character mount) - same approach as your Hero
+    Paragraph reveal (character mount)
   --------------------------*/
   const paragraph =
     "We help organisations build modern HR operations — from onboarding to exits — with software and services that reduce manual effort, ensure compliance, and surface the insights HR and leadership need to act.";
 
-  // reveal timings
-  const stagger = 0.02; // seconds per character
-  const initialDelay = 0.12; // seconds before first char
+  const stagger = 0.02;
+  const initialDelay = 0.12;
 
   const totalChars = paragraph.length;
   const [revealedStep, setRevealedStep] = useState<number>(0);
@@ -120,11 +130,7 @@ export default function WhatWeDo(): JSX.Element {
       const effective = Math.max(0, elapsed - initialDelay);
       const index = Math.floor(effective / stagger);
       const next = Math.min(totalChars, index);
-      // update state safely
-      setRevealedStep((prev) => {
-        if (prev === next) return prev;
-        return next;
-      });
+      setRevealedStep((prev) => (prev === next ? prev : next));
       if (next < totalChars) rafRef.current = requestAnimationFrame(step);
       else rafRef.current = null;
     }
@@ -155,7 +161,7 @@ export default function WhatWeDo(): JSX.Element {
   }
 
   /* -------------------------
-    Email CTA (same UX as your Hero)
+    Email CTA
   --------------------------*/
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<null | "idle" | "sent" | "error">(null);
@@ -186,7 +192,7 @@ export default function WhatWeDo(): JSX.Element {
             ZaroHR — Because HR should work, not just exist.
           </motion.p>
 
-          {/* Revealing paragraph (character-by-character) */}
+          {/* Revealing paragraph */}
           <div className="text-lg text-gray-300 max-w-prose mb-6">
             {reducedMotion ? (
               <p>{paragraph}</p>
@@ -245,10 +251,9 @@ export default function WhatWeDo(): JSX.Element {
         </aside>
       </div>
 
-      {/* FEATURE GRID (styled like the FeatureGrid you shared) */}
+      {/* FEATURE GRID */}
       <section id="services" className="py-12">
         <div className="max-w-6xl mx-auto px-6">
-          {/* Section header */}
           <div className="text-center mb-8">
             <h2 className="text-3xl sm:text-4xl font-extrabold text-white">Core Services</h2>
             <p className="mt-2 text-sm text-white/70 max-w-2xl mx-auto">
@@ -256,7 +261,6 @@ export default function WhatWeDo(): JSX.Element {
             </p>
           </div>
 
-          {/* Grid */}
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {features.map((f) => (
               <motion.a
@@ -269,22 +273,17 @@ export default function WhatWeDo(): JSX.Element {
                 transition={{ type: "spring", stiffness: 220, damping: 20 }}
                 className="group relative flex h-full w-full items-start gap-6 rounded-2xl bg-white/5 border border-white/10 p-6 shadow-md backdrop-blur-sm hover:shadow-lg hover:border-amber-400/20 transition-all focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-400/30"
               >
-                {/* Icon */}
                 <div className="flex-shrink-0">
                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-amber-400 shadow-sm">{f.icon}</div>
                 </div>
 
-                {/* Text Content */}
                 <div className="flex-1 min-w-0 text-left">
                   <h3 className="text-lg font-semibold text-white leading-tight">{f.title}</h3>
                   <p className="mt-2 text-sm text-white/70 leading-relaxed">{f.desc}</p>
                 </div>
 
-                {/* Arrow CTA */}
                 <motion.div
-                  className={`ml-4 flex items-center justify-center rounded-full w-9 h-9 transition ${
-                    (f as any).live ? "bg-emerald-500 text-white hover:bg-emerald-400 shadow-md" : "bg-white/10 text-white/80 group-hover:bg-white/20"
-                  }`}
+                  className={`ml-4 flex items-center justify-center rounded-full w-9 h-9 transition ${f.live ? "bg-emerald-500 text-white hover:bg-emerald-400 shadow-md" : "bg-white/10 text-white/80 group-hover:bg-white/20"}`}
                   whileHover={{ x: 4 }}
                   transition={{ type: "spring", stiffness: 300, damping: 25 }}
                   aria-hidden
@@ -292,10 +291,8 @@ export default function WhatWeDo(): JSX.Element {
                   <ArrowRight className="w-4 h-4" />
                 </motion.div>
 
-                {/* Accent line */}
                 <span className="absolute left-6 right-6 bottom-0 h-[1px] bg-gradient-to-r from-transparent via-amber-400/40 to-transparent rounded-b-xl" />
 
-                {/* Optional: tiny live badge indicator */}
                 {f.live && (
                   <span className="absolute bottom-3 right-4 inline-flex items-center gap-1 text-emerald-400 text-xs font-medium">
                     <span className="w-2 h-2 bg-emerald-400 rounded-full animate-pulse" />
@@ -305,7 +302,6 @@ export default function WhatWeDo(): JSX.Element {
               </motion.a>
             ))}
           </div>
-          
         </div>
       </section>
 
@@ -321,7 +317,6 @@ export default function WhatWeDo(): JSX.Element {
               See Workforce Management
             </a>
           </div>
-
         </div>
       </div>
 

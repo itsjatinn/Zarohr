@@ -1,6 +1,7 @@
 "use client";
 
 import React, { JSX, useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { motion, Variants } from "framer-motion";
 import { Mail, Cpu, Zap, DollarSign, BarChart2, Users2, ShieldCheck, ArrowRight } from "lucide-react";
 
@@ -54,6 +55,7 @@ type Feature = {
 
 export default function WhatWeDo(): JSX.Element {
   const reducedMotion = usePrefersReducedMotion();
+  const router = useRouter();
 
   const features: Feature[] = [
     {
@@ -168,14 +170,19 @@ export default function WhatWeDo(): JSX.Element {
 
   function handleSubmit(e?: React.FormEvent) {
     e?.preventDefault();
-    if (!email || !email.includes("@")) {
+    const trimmed = email.trim();
+    if (!trimmed || !trimmed.includes("@") || trimmed.length < 3) {
       setStatus("error");
       setTimeout(() => setStatus(null), 2400);
       return;
     }
-    // replace with real API
+
+    // Navigate to survey and prefill email via query param
+    const encoded = encodeURIComponent(trimmed);
+    router.push(`/getstarted?email=${encoded}`);
+
+    // transient UI
     setStatus("sent");
-    setEmail("");
     setTimeout(() => setStatus(null), 2600);
   }
 
@@ -313,9 +320,20 @@ export default function WhatWeDo(): JSX.Element {
           <h3 className="text-2xl md:text-3xl font-bold">Ready to simplify HR?</h3>
           <p className="mt-3 text-gray-300">Book a demo and we’ll show a tailored walkthrough for your organisation.</p>
           <div className="mt-6">
-            <a href={externalLink} target="_blank" rel="noreferrer" className="inline-block px-6 py-3 rounded-xl bg-amber-400 text-black font-semibold shadow-lg hover:brightness-95">
-              See Workforce Management
-            </a>
+            {/* Updated: route to /getstarted and pass email if provided */}
+            <button
+              onClick={() => {
+                const trimmed = email.trim();
+                if (trimmed && trimmed.includes("@")) {
+                  router.push(`/getstarted?email=${encodeURIComponent(trimmed)}`);
+                } else {
+                  router.push(`/getstarted`);
+                }
+              }}
+              className="inline-block px-6 py-3 rounded-xl bg-amber-400 text-black font-semibold shadow-lg hover:brightness-95"
+            >
+              Get Started
+            </button>
           </div>
         </div>
       </div>

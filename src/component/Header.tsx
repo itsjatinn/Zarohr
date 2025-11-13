@@ -94,7 +94,7 @@ export default function Header() {
               </Link>
             ))}
             <Link
-              href="/comingsoon"
+              href="/getstarted"
               className="flex items-center gap-2 px-4 py-2 rounded-md bg-amber-400 text-black font-semibold hover:bg-white transition"
             >
               <Rocket size={16} /> Get Started
@@ -182,7 +182,7 @@ export default function Header() {
                   {/* CTA */}
                   <div className="border-t border-white/10 p-4">
                     <Link
-                      href="/comingsoon"
+                      href="/getstarted"
                       onClick={() => setOpen(false)}
                       className="inline-flex w-full items-center justify-center gap-2 rounded-lg px-4 py-3 font-semibold bg-amber-400 text-black hover:bg-white transition"
                     >

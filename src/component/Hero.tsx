@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Mail } from "lucide-react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
+import { useRouter } from "next/navigation";
 
 /* -------------------------
   Small hook: prefers-reduced-motion
@@ -22,6 +23,7 @@ function usePrefersReducedMotion() {
 
 export default function Hero() {
   const reducedMotion = usePrefersReducedMotion();
+  const router = useRouter();
 
   const [showSplash, setShowSplash] = useState(true);
   // contentVisible controls rendering of the main content. If reducedMotion is true,
@@ -42,16 +44,24 @@ export default function Hero() {
     return () => clearTimeout(t);
   }, [reducedMotion]);
 
+  // UPDATED handleSubmit: navigate to survey with email as query param
   function handleSubmit(e?: React.FormEvent) {
     e?.preventDefault();
-    if (!email || !email.includes("@")) {
+
+    const trimmed = email.trim();
+    if (!trimmed || !trimmed.includes("@") || trimmed.length < 3) {
       setStatus("error");
       setTimeout(() => setStatus(null), 2400);
       return;
     }
-    // Replace with your API call
+
+    // navigate to the survey page and pass the email as a query param.
+    // The survey page reads ?email=... and pre-fills the contactEmail field.
+    const encoded = encodeURIComponent(trimmed);
+    router.push(`/getstarted?email=${encoded}`);
+
+    // Optionally show a small transient state (keeps email visible while routing)
     setStatus("sent");
-    setEmail("");
     setTimeout(() => setStatus(null), 2600);
   }
 
@@ -257,7 +267,6 @@ export default function Hero() {
                 Cut Through the Clutter. <span className="hidden sm:inline">Power What’s Next.</span>
               </motion.p>
             </motion.header>
-
 
             {/* Description: two paragraphs — mounted characters grow the paragraph */}
             <motion.div

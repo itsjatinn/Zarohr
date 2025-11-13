@@ -38,7 +38,7 @@ const itemVariants: Variants = {
   show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
 };
 
-const externalLink = "https://www.zinghr.com/solutions/workforce-management/";
+const externalLink = "#";
 
 /* -------------------------
    Types

@@ -95,9 +95,9 @@ export default function ContactPage() {
                     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.2" />
                   </svg>
                 </div>
-                <div className="text-base font-semibold">ZaroHR Pvt. Ltd.</div>
-                <div className="mt-0.5 text-xs text-white/90">Floor 10, Tower B, Business Bay</div>
-                <div className="text-xs text-white/90">Andheri East, Mumbai — 400093</div>
+                <div className="text-base font-semibold">ZaroHR Solutions</div>
+                <div className="mt-0.5 text-xs text-white/90">OneDegree Co-Working, 2nd Floor, Jainam Compound,Bhandup (W)</div>
+                <div className="text-xs relative justify-center text-white/90">  Mumbai — 400078</div>
               </div>
 
               {/* Bottom-left (Phone) */}
@@ -114,7 +114,7 @@ export default function ContactPage() {
                 </div>
                 <div className="text-base font-semibold">Sales Enquiry</div>
                 <a href="tel:+9118002336504" className="mt-0.5 text-xs font-medium text-white hover:underline">
-                  1800-233-6504
+                  +91 98335 76742
                 </a>
               </div>
 
@@ -150,7 +150,7 @@ export default function ContactPage() {
                 </div>
                 <div className="text-lg font-semibold">Sales Enquiry</div>
                 <a href="tel:+9118002336504" className="mt-1 text-sm md:text-m font-medium text-white hover:underline">
-                  1800-233-6504
+                  +91 98335 76742
                 </a>
               </div>
 
@@ -163,9 +163,9 @@ export default function ContactPage() {
                     <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
                   </svg>
                 </div>
-                <div className="text-lg font-semibold">ZaroHR Pvt. Ltd.</div>
-                <div className="mt-1 text-sm">Floor 10, Tower B, Business Bay</div>
-                <div className="text-sm">Andheri East, Mumbai — 400093</div>
+                <div className="text-lg font-semibold">ZaroHR Solutions</div>
+                <div className="mt-1 text-sm">OneDegree Co-Working, 2nd Floor, Jainam Compound,</div>
+                <div className="text-sm">Bhandup (W), Mumbai-400078</div>
               </div>
 
               {/* Email */}
@@ -318,11 +318,11 @@ export default function ContactPage() {
 
           {/* Company info (unchanged) */}
           <div className="text-center mt-8 text-sm text-neutral-400">
-            <div>ZaroHR Pvt. Ltd. — Floor 10, Tower B, Business Bay, Andheri East, Mumbai</div>
+            <div>ZaroHR Solutions — OneDegree Co-Working, 2nd Floor, Jainam Compound, Bhandup (W), Mumbai-400078</div>
             <div className="mt-1">
               Phone:{" "}
               <a className="text-amber-400 hover:underline" href="tel:+9118002336504">
-                1800-233-6504
+                +91 98335 76742
               </a>{" "}
               — Email:{" "}
               <a className="text-amber-400 hover:underline" href="mailto:info@zarohr.com">

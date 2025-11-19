@@ -173,20 +173,6 @@ export default function GetStartedSurvey(): JSX.Element {
                   placeholder="ACME Ltd"
                 />
               </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-300">Website</span>
-                <input
-                  name="website"
-                  value={form.website}
-                  onChange={handleChange}
-                  className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full focus:outline-none focus:ring-2 focus:ring-amber-400"
-                  placeholder="https://yourdomain.com"
-                />
-              </label>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <label className="flex flex-col">
                 <span className="text-sm text-gray-300">Company size</span>
                 <select
@@ -204,33 +190,10 @@ export default function GetStartedSurvey(): JSX.Element {
                 </select>
               </label>
 
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-300">Industry</span>
-                <input
-                  name="industry"
-                  value={form.industry}
-                  onChange={handleChange}
-                  className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full"
-                  placeholder="e.g. SaaS, Manufacturing"
-                />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-300">Timeline</span>
-                <select
-                  name="timeline"
-                  value={form.timeline}
-                  onChange={handleChange}
-                  className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full"
-                >
-                  <option value="">When do you want to start?</option>
-                  <option>Immediately</option>
-                  <option>1-3 months</option>
-                  <option>3-6 months</option>
-                  <option>6+ months</option>
-                </select>
-              </label>
+              
             </div>
+
+            
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="flex flex-col">
@@ -274,16 +237,7 @@ export default function GetStartedSurvey(): JSX.Element {
               </div>
             </fieldset>
 
-            <label className="flex flex-col">
-              <span className="text-sm text-gray-300">What HR tools do you use today?</span>
-              <input
-                name="currentTools"
-                value={form.currentTools}
-                onChange={handleChange}
-                className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full"
-                placeholder="e.g. BambooHR, Excel, QuickBooks"
-              />
-            </label>
+            
 
             <label className="flex flex-col">
               <span className="text-sm text-gray-300">Biggest HR pain points</span>
@@ -297,41 +251,7 @@ export default function GetStartedSurvey(): JSX.Element {
               />
             </label>
 
-            <label className="flex flex-col">
-              <span className="text-sm text-gray-300">Must-have features or compliance requirements</span>
-              <textarea
-                name="mustHaves"
-                value={form.mustHaves}
-                onChange={handleChange}
-                rows={3}
-                className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-2xl"
-                placeholder="e.g. ISO, payroll country-specific rules, audit logs"
-              />
-            </label>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-300">Estimated budget (optional)</span>
-                <input
-                  name="budget"
-                  value={form.budget}
-                  onChange={handleChange}
-                  className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full"
-                  placeholder="Monthly / Annual budget range"
-                />
-              </label>
-
-              <label className="flex flex-col">
-                <span className="text-sm text-gray-300">Anything else we should know?</span>
-                <input
-                  name="additional"
-                  value={form.additional}
-                  onChange={handleChange}
-                  className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full"
-                  placeholder="E.g. preferred meeting times, other stakeholders"
-                />
-              </label>
-            </div>
+            
 
             <div className="flex items-start gap-3">
               <input
@@ -367,12 +287,12 @@ export default function GetStartedSurvey(): JSX.Element {
           <aside className="order-1 lg:order-1 lg:col-span-1 bg-neutral-900/60 border border-gray-800 rounded-2xl p-6 space-y-4 text-left">
             <h3 className="text-2xl font-semibold text-amber-300">How we&apos;ll use this</h3>
             <ul className="list-disc pl-5 text-gray-300 space-y-2 text-sm">
-              <li>HR Tech — automating the employee journey with reliable, scalable tools.</li>
-              <li>HR Operations — onboarding to exits, process automation and accuracy.</li>
-              <li>Payroll — compliant, on-time payroll processing and benefits handling.</li>
-              <li>People Analytics — dashboards and insights to drive people decisions.</li>
-              <li>ESOP Services — design and administration to build ownership culture.</li>
-              <li>Mandatory Trainings — POSH, AML and other compliance trainings with automated reminders.</li>
+              <li>HR Tech — automating the employee journey with reliable, scalable tools</li>
+              <li>HR Operations — onboarding to exits, process automation and accuracy</li>
+              <li>Payroll — compliant, on-time payroll processing and benefits handling</li>
+              <li>People Analytics — dashboards and insights to drive people decisions</li>
+              <li>ESOP Services — design and administration to build ownership culture</li>
+              <li>Mandatory Trainings — POSH, AML and other compliance trainings with automated reminders</li>
             </ul>
 
             <hr className="border-gray-800" />
@@ -381,10 +301,10 @@ export default function GetStartedSurvey(): JSX.Element {
             <ol className="list-decimal pl-5 text-gray-300 text-sm space-y-2">
               <li>Mention any payroll or compliance constraints.</li>
               <li>List the HR tools you currently use (or Excel!).</li>
-              <li>Be honest about budget & timeline so we can match options.</li>
+              
             </ol>
 
-            <div className="mt-3 text-xs text-gray-500">Prefer a direct demo? Email <a href="mailto:sales@yourdomain.com" className="text-amber-300">sales@yourdomain.com</a></div>
+            <div className="mt-3 text-xs text-gray-500">Book a consaltant- Email <a href="mailto:sales@yourdomain.com" className="text-amber-300">info@zarohr.com</a></div>
           </aside>
         </form>
       </div>

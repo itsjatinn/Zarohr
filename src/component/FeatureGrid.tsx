@@ -9,6 +9,8 @@ import {
   Users2,
   ShieldCheck,
   ArrowRight,
+  FileText,
+  ClipboardList,
 } from "lucide-react";
 
 export default function FeatureGrid() {
@@ -49,6 +51,22 @@ export default function FeatureGrid() {
       icon: <ShieldCheck className="w-5 h-5 text-black" />,
       href: "https://compliance-portal-tau.vercel.app/",
       live: true, // mark as live
+    },
+    // NEW: Compensation & Benefits
+    {
+      id: "comp-benefits",
+      title: "Compensation & Benefits",
+      desc: "Designing competitive pay structures and benefits packages that attract and retain talent.",
+      icon: <ClipboardList className="w-5 h-5 text-black" />,
+      href: "/comingsoon",
+    },
+    // NEW: Audits
+    {
+      id: "audits",
+      title: "Audits",
+      desc: "Audit-ready processes and reports to keep you compliant and inspection-proof.",
+      icon: <FileText className="w-5 h-5 text-black" />,
+      href: "/comingsoon",
     },
   ];
 

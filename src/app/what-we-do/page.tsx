@@ -2,8 +2,19 @@
 
 import React, { JSX, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { motion, Variants } from "framer-motion";
-import { Mail, Cpu, Zap, DollarSign, BarChart2, Users2, ShieldCheck, ArrowRight } from "lucide-react";
+import { motion, AnimatePresence, Variants } from "framer-motion";
+import {
+  Mail,
+  Cpu,
+  Zap,
+  DollarSign,
+  BarChart2,
+  Users2,
+  ShieldCheck,
+  ArrowRight,
+  ClipboardList,
+  FileText,
+} from "lucide-react";
 
 /* -------------------------
   Small hook: prefers-reduced-motion
@@ -101,6 +112,22 @@ export default function WhatWeDo(): JSX.Element {
       href: "https://compliance-portal-tau.vercel.app/",
       live: true,
     },
+    // NEW: Compensation & Benefits
+    {
+      id: "comp-benefits",
+      title: "Compensation & Benefits",
+      desc: "Designing competitive pay structures and benefits packages that attract and retain talent.",
+      icon: <ClipboardList className="w-5 h-5 text-black" />,
+      href: externalLink,
+    },
+    // NEW: Audits
+    {
+      id: "audits",
+      title: "Audits",
+      desc: "Audit-ready processes and reports to keep you compliant and inspection-proof.",
+      icon: <FileText className="w-5 h-5 text-black" />,
+      href: externalLink,
+    },
   ];
 
   /* -------------------------
@@ -163,28 +190,123 @@ export default function WhatWeDo(): JSX.Element {
   }
 
   /* -------------------------
-    Email CTA
+    Email CTA state + behavior (copied/adapted from Hero)
   --------------------------*/
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<null | "idle" | "sent" | "error">(null);
 
+  // inline popup for invalid/missing email
+  const [showPopup, setShowPopup] = useState(false);
+  const popupTimerRef = useRef<number | null>(null);
+
+  // tooltip on hover / click for the button
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showTooltipClick, setShowTooltipClick] = useState(false); // true when triggered by click
+  const tooltipTimerRef = useRef<number | null>(null);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  function dismissPopup() {
+    setShowPopup(false);
+    setStatus(null);
+    if (popupTimerRef.current) {
+      window.clearTimeout(popupTimerRef.current);
+      popupTimerRef.current = null;
+    }
+  }
+
+  function showTooltipForClick() {
+    if (tooltipTimerRef.current) {
+      window.clearTimeout(tooltipTimerRef.current);
+    }
+    setShowTooltip(true);
+    setShowTooltipClick(true);
+
+    tooltipTimerRef.current = window.setTimeout(() => {
+      setShowTooltip(false);
+      setShowTooltipClick(false);
+      tooltipTimerRef.current = null;
+    }, 2600);
+  }
+
   function handleSubmit(e?: React.FormEvent) {
     e?.preventDefault();
     const trimmed = email.trim();
-    if (!trimmed || !trimmed.includes("@") || trimmed.length < 3) {
+    const validEmail = trimmed && trimmed.includes("@") && trimmed.length >= 3;
+
+    // always show click tooltip when button clicked
+    showTooltipForClick();
+
+    if (!validEmail) {
+      // hide tooltip immediately so both don't show together
+      if (tooltipTimerRef.current) {
+        window.clearTimeout(tooltipTimerRef.current);
+        tooltipTimerRef.current = null;
+      }
+      setShowTooltip(false);
+      setShowTooltipClick(false);
+
+      // show animated inline popup and focus input
+      setShowPopup(true);
       setStatus("error");
-      setTimeout(() => setStatus(null), 2400);
+
+      // clear existing popup timer
+      if (popupTimerRef.current) {
+        window.clearTimeout(popupTimerRef.current);
+      }
+      popupTimerRef.current = window.setTimeout(() => {
+        setShowPopup(false);
+        setStatus(null);
+        popupTimerRef.current = null;
+      }, 2600);
+
+      inputRef.current?.focus();
       return;
     }
 
-    // Navigate to survey and prefill email via query param
+    // navigate to the survey page and pass the email as a query param.
     const encoded = encodeURIComponent(trimmed);
     router.push(`/getstarted?email=${encoded}`);
 
-    // transient UI
+    // show a small transient state
     setStatus("sent");
     setTimeout(() => setStatus(null), 2600);
   }
+
+  // popup + tooltip motion variants
+  const popupVariants: Variants = {
+    initial: { opacity: 0, y: -6, scale: 0.98 },
+    animate: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 500, damping: 28 } },
+    exit: { opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.18 } },
+  };
+
+  const tooltipVariants: Variants = {
+    initial: { opacity: 0, y: 8 },
+    animate: (isClick: boolean) =>
+      isClick
+        ? { opacity: 1, y: -8, transition: { duration: 0.22, ease: [0.2, 0.9, 0.3, 1] } } // fade up on click
+        : { opacity: 1, y: 0, transition: { duration: 0.18, ease: [0.2, 0.9, 0.3, 1] } }, // subtle on hover
+    exit: { opacity: 0, y: 8, transition: { duration: 0.12 } },
+  };
+
+  // clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (popupTimerRef.current) {
+        window.clearTimeout(popupTimerRef.current);
+        popupTimerRef.current = null;
+      }
+      if (tooltipTimerRef.current) {
+        window.clearTimeout(tooltipTimerRef.current);
+        tooltipTimerRef.current = null;
+      }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      startRef.current = null;
+    };
+  }, []);
 
   return (
     <section className="min-h-screen bg-black text-white">
@@ -215,7 +337,7 @@ export default function WhatWeDo(): JSX.Element {
               handleSubmit(e);
             }}
             variants={itemVariants}
-            className="mt-2 w-full max-w-md flex items-center gap-4 bg-white/6 border border-white/12 rounded-full p-2 shadow-sm"
+            className="mt-2 w-full max-w-md flex items-center gap-4 bg-white/6 border border-white/12 rounded-full p-2 shadow-sm relative"
             aria-label="Get started with ZaroHR"
           >
             <div className="relative flex-1">
@@ -225,21 +347,95 @@ export default function WhatWeDo(): JSX.Element {
               </label>
               <input
                 id="whatwe-do-email"
+                ref={inputRef}
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 type="email"
                 placeholder="Your work email"
-                className="w-full pl-12 pr-4 h-12 rounded-full bg-transparent text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-amber-400"
+                className="w-full pl-12 pr-4 h-12 rounded-full bg-transparent text-white placeholder-white/60 focus:outline-none focus:ring-2 focus:ring-white"
               />
             </div>
 
-            <button
-              type="submit"
-              className="h-12 px-6 rounded-full bg-amber-400 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-amber-400/30 hover:bg-white transition"
-              aria-pressed={status === "sent"}
+            <div
+              className="relative flex items-center"
+              onMouseEnter={() => {
+                if (tooltipTimerRef.current) window.clearTimeout(tooltipTimerRef.current);
+                tooltipTimerRef.current = window.setTimeout(() => {
+                  setShowTooltip(true);
+                  setShowTooltipClick(false);
+                }, 70);
+              }}
+              onMouseLeave={() => {
+                if (tooltipTimerRef.current) window.clearTimeout(tooltipTimerRef.current);
+                tooltipTimerRef.current = window.setTimeout(() => {
+                  setShowTooltip(false);
+                  setShowTooltipClick(false);
+                }, 80);
+              }}
             >
-              {status === "sent" ? "Thanks — we'll reach out" : "Get started"}
-            </button>
+              <button
+                type="submit"
+                onClick={() => {
+                  showTooltipForClick();
+                }}
+                className="h-12 px-6 rounded-full bg-amber-400 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-amber-400/30 hover:bg-white transition"
+                aria-pressed={status === "sent"}
+              >
+                {status === "sent" ? "Thanks — we'll reach out" : "Get started"}
+              </button>
+
+              {/* Hover/Click Tooltip (centered under button). Hide while popup visible */}
+              <AnimatePresence>
+                {showTooltip && !showPopup && (
+                  <motion.div
+                    key="hover-tooltip"
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={tooltipVariants}
+                    custom={showTooltipClick}
+                    className="absolute left-1/2 -translate-x-1/2 top-full mt-3 pointer-events-none z-40"
+                    aria-hidden={!showTooltip}
+                  >
+                    <div className="bg-amber-400 text-black font-semibold text-xs px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap">
+                      Ready to tidy up HR?
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Inline animated error popup: appears below the button */}
+              <AnimatePresence>
+                {showPopup && (
+                  <motion.div
+                    key="email-popup"
+                    initial="initial"
+                    animate="animate"
+                    exit="exit"
+                    variants={popupVariants}
+                    className="absolute right-0 top-full mt-3 w-72 sm:w-80 pointer-events-auto z-50"
+                    role="alert"
+                    aria-live="assertive"
+                  >
+                    <div className="bg-rose-600/95 text-white rounded-xl px-4 py-3 shadow-lg border border-rose-500">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-1">
+                          <p className="font-semibold text-sm">Please enter a valid work email</p>
+                          <p className="text-xs opacity-90 mt-1">We need your email to start the conversation</p>
+                        </div>
+                        <button
+                          onClick={() => dismissPopup()}
+                          aria-label="Dismiss"
+                          className="ml-2 text-white/85 hover:text-white/95 focus:outline-none"
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </motion.form>
 
           {/* <motion.p variants={fadeUp} className="text-sm text-white/70 mt-4 max-w-md">
@@ -247,7 +443,7 @@ export default function WhatWeDo(): JSX.Element {
           </motion.p> */}
         </motion.div>
 
-        {/* Quick Benefits Card */}
+        {/* Quick Benefits Card (commented out by default) */}
         {/* <aside className="rounded-3xl mt-16 p-9 bg-gradient-to-br from-amber-400/10 to-black border border-amber-400/6">
           <h3 className="text-2xl font-semibold text-amber-400">Why choose us</h3>
           <ul className="mt-4 space-y-3 text-gray-200">
@@ -312,8 +508,6 @@ export default function WhatWeDo(): JSX.Element {
         </div>
       </section>
 
-      
-
       {/* CTA */}
       <div className="bg-gradient-to-r from-black to-black/90 py-12">
         <div className="max-w-6xl mx-auto px-6 text-center">
@@ -337,27 +531,13 @@ export default function WhatWeDo(): JSX.Element {
           </div>
         </div>
       </div>
-
-      {/* FAQ */}
-      <div className="max-w-6xl mx-auto px-6 py-12">
-        <h4 className="text-xl font-semibold text-amber-400">FAQ</h4>
-        <div className="mt-6 grid gap-4">
-          <FaqItem q="Is this suitable for distributed teams?" a="Yes — the system supports multiple locations, flexible pay cycles and role-based access." />
-          <FaqItem q="Can we integrate with our existing HR/payroll systems?" a="We provide integrations and configurable exports to fit your accounting and ERP workflows." />
-          <FaqItem q="How do you handle statutory compliance?" a="Compliance rules are built into payroll and report exports; we also provide country-specific updates where required." />
-        </div>
-      </div>
-
-      <footer className="border-t border-amber-400/8 py-8">
-        <div className="max-w-6xl mx-auto px-6 text-center text-gray-400">© {new Date().getFullYear()} Your Company — All rights reserved.</div>
-      </footer>
     </section>
   );
 }
 
 /* -------------------------
    Subcomponents
-   ------------------------- */
+--------------------------*/
 
 function DetailRow({
   title,

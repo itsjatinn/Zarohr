@@ -235,27 +235,27 @@ export default function WhatWeDo(): JSX.Element {
 
             <button
               type="submit"
-              className="h-12 px-6 rounded-full bg-amber-400 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-amber-400/30"
+              className="h-12 px-6 rounded-full bg-amber-400 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-amber-400/30 hover:bg-white transition"
               aria-pressed={status === "sent"}
             >
               {status === "sent" ? "Thanks — we'll reach out" : "Get started"}
             </button>
           </motion.form>
 
-          <motion.p variants={fadeUp} className="text-sm text-white/70 mt-4 max-w-md">
+          {/* <motion.p variants={fadeUp} className="text-sm text-white/70 mt-4 max-w-md">
             No spam — just a quick intro and optional product walkthrough.
-          </motion.p>
+          </motion.p> */}
         </motion.div>
 
         {/* Quick Benefits Card */}
-        <aside className="rounded-3xl mt-16 p-9 bg-gradient-to-br from-amber-400/10 to-black border border-amber-400/6">
+        {/* <aside className="rounded-3xl mt-16 p-9 bg-gradient-to-br from-amber-400/10 to-black border border-amber-400/6">
           <h3 className="text-2xl font-semibold text-amber-400">Why choose us</h3>
           <ul className="mt-4 space-y-3 text-gray-200">
             <li>End-to-end HR coverage — a single source of truth for people data.</li>
             <li>Automations that remove manual work and reduce errors.</li>
             <li>Compliance-first approach with audit-ready reporting.</li>
           </ul>
-        </aside>
+        </aside> */}
       </div>
 
       {/* FEATURE GRID */}
@@ -330,7 +330,7 @@ export default function WhatWeDo(): JSX.Element {
                   router.push(`/getstarted`);
                 }
               }}
-              className="inline-block px-6 py-3 rounded-xl bg-amber-400 text-black font-semibold shadow-lg hover:brightness-95"
+              className="inline-block px-6 py-3 rounded-xl bg-amber-400 text-black font-semibold shadow-lg hover:brightness-95 hover:bg-white transition"
             >
               Get Started
             </button>

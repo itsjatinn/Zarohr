@@ -14,6 +14,7 @@ type FormState = {
   industry: string;
   contactName: string;
   contactEmail: string;
+  contactNumber: string;
   priorities: string[];
   currentTools: string;
   painPoints: string;
@@ -32,6 +33,7 @@ export default function GetStartedSurvey(): JSX.Element {
     industry: "",
     contactName: "",
     contactEmail: "",
+    contactNumber: "",
     priorities: [],
     currentTools: "",
     painPoints: "",
@@ -96,10 +98,14 @@ export default function GetStartedSurvey(): JSX.Element {
     setStatus(null);
 
     // Basic validation
-    if (!form.contactEmail || !form.orgName) {
-      setStatus({ ok: false, msg: "Please provide your organization name and contact email." });
+      if (!form.contactEmail || !form.contactNumber || !form.orgName) {
+      setStatus({
+      ok: false,
+      msg: "Please provide organization name, contact email, and contact number.",
+      });
       return;
     }
+
     if (!form.consent) {
       setStatus({ ok: false, msg: "Please confirm consent to contact you." });
       return;
@@ -124,6 +130,7 @@ export default function GetStartedSurvey(): JSX.Element {
           industry: "",
           contactName: "",
           contactEmail: "",
+          contactNumber: "",
           priorities: [],
           currentTools: "",
           painPoints: "",
@@ -216,6 +223,17 @@ export default function GetStartedSurvey(): JSX.Element {
                   onChange={handleChange}
                   className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full"
                   placeholder="name@company.com"
+                />
+              </label>
+              <label className="flex flex-col md:col-span-1">
+                <span className="text-sm text-gray-300">Contact number *</span>
+                <input
+                  name="contactNumber"
+                  type="tel"
+                  value={form.contactNumber}
+                  onChange={handleChange}
+                  className="mt-2 px-4 py-3 bg-neutral-800 border border-gray-800 rounded-full"
+                  placeholder="+91 98765 43210"
                 />
               </label>
             </div>

@@ -26,52 +26,123 @@ export default function Hero() {
   const router = useRouter();
 
   const [showSplash, setShowSplash] = useState(true);
-  // contentVisible controls rendering of the main content. If reducedMotion is true,
-  // show content immediately.
   const [contentVisible, setContentVisible] = useState<boolean>(reducedMotion);
 
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<null | "idle" | "sent" | "error">(null);
 
+  // inline popup for invalid/missing email
+  const [showPopup, setShowPopup] = useState(false);
+  const popupTimerRef = useRef<number | null>(null);
+
+  // tooltip on hover / click for the button
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [showTooltipClick, setShowTooltipClick] = useState(false); // true when triggered by click
+  const tooltipTimerRef = useRef<number | null>(null);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
+
+  // Ensure splash is visible at least this long (ms).
+  const SPLASH_MIN_VISIBLE = 1000; // at least 1 second
+  // Total splash time (ms) you want. Keep >= SPLASH_MIN_VISIBLE.
+  const SPLASH_TOTAL = 2000; // increase if you want it longer
+
   useEffect(() => {
     if (reducedMotion) {
-      // if user prefers reduced motion, skip splash entirely and show content
       setShowSplash(false);
       setContentVisible(true);
       return;
     }
-    const t = setTimeout(() => setShowSplash(false), 1400);
+    // Keep the splash visible for at least SPLASH_MIN_VISIBLE and use SPLASH_TOTAL as the actual display duration.
+    const t = window.setTimeout(() => setShowSplash(false), Math.max(SPLASH_MIN_VISIBLE, SPLASH_TOTAL));
     return () => clearTimeout(t);
   }, [reducedMotion]);
 
-  // UPDATED handleSubmit: navigate to survey with email as query param
+  function dismissPopup() {
+    setShowPopup(false);
+    setStatus(null);
+    if (popupTimerRef.current) {
+      window.clearTimeout(popupTimerRef.current);
+      popupTimerRef.current = null;
+    }
+  }
+
+  function showTooltipForClick() {
+    // show tooltip as click variant (fade up)
+    if (tooltipTimerRef.current) {
+      window.clearTimeout(tooltipTimerRef.current);
+    }
+    setShowTooltip(true);
+    setShowTooltipClick(true);
+
+    tooltipTimerRef.current = window.setTimeout(() => {
+      setShowTooltip(false);
+      setShowTooltipClick(false);
+      tooltipTimerRef.current = null;
+    }, 2600);
+  }
+
   function handleSubmit(e?: React.FormEvent) {
     e?.preventDefault();
 
     const trimmed = email.trim();
-    if (!trimmed || !trimmed.includes("@") || trimmed.length < 3) {
+    const validEmail = trimmed && trimmed.includes("@") && trimmed.length >= 3;
+
+    // show click tooltip on any click (as requested) — but will be hidden immediately if popup appears
+    showTooltipForClick();
+
+    if (!validEmail) {
+      // hide tooltip immediately so both are not visible together
+      if (tooltipTimerRef.current) {
+        window.clearTimeout(tooltipTimerRef.current);
+        tooltipTimerRef.current = null;
+      }
+      setShowTooltip(false);
+      setShowTooltipClick(false);
+
+      // show animated inline popup and focus input
+      setShowPopup(true);
       setStatus("error");
-      setTimeout(() => setStatus(null), 2400);
+
+      // clear any existing popup timer
+      if (popupTimerRef.current) {
+        window.clearTimeout(popupTimerRef.current);
+      }
+      popupTimerRef.current = window.setTimeout(() => {
+        setShowPopup(false);
+        setStatus(null);
+        popupTimerRef.current = null;
+      }, 2600);
+
+      // focus input for quicker correction
+      inputRef.current?.focus();
       return;
     }
 
     // navigate to the survey page and pass the email as a query param.
-    // The survey page reads ?email=... and pre-fills the contactEmail field.
     const encoded = encodeURIComponent(trimmed);
     router.push(`/getstarted?email=${encoded}`);
 
-    // Optionally show a small transient state (keeps email visible while routing)
+    // show a small transient state
     setStatus("sent");
     setTimeout(() => setStatus(null), 2600);
   }
 
   /* -------------------------
-    Motion variants (unchanged)
+    Motion variants (splash durations increased)
   --------------------------*/
   const splashVariants: Variants = {
     initial: { opacity: 0, scale: 0.96 },
-    animate: { opacity: 1, scale: 1, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
-    exit: { opacity: 0, scale: 0.98, transition: { duration: 0.35, ease: [0.4, 0, 0.2, 1] } },
+    animate: {
+      opacity: 1,
+      scale: 1,
+      transition: { duration: 0.8, ease: [0.22, 1, 0.36, 1] }, // slower, more noticeable
+    },
+    exit: {
+      opacity: 0,
+      scale: 0.985,
+      transition: { duration: 0.6, ease: [0.4, 0, 0.2, 1] }, // softer exit
+    },
   };
 
   const containerVariants: Variants = {
@@ -84,23 +155,38 @@ export default function Hero() {
     show: { opacity: 1, y: 0, transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } },
   };
 
+  // popup animation variants (error)
+  const popupVariants: Variants = {
+    initial: { opacity: 0, y: -6, scale: 0.98 },
+    animate: { opacity: 1, y: 0, scale: 1, transition: { type: "spring", stiffness: 500, damping: 28 } },
+    exit: { opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.18 } },
+  };
+
+  // tooltip variants: use `custom` to switch between hover (stay) and click (fade up) behaviors
+  const tooltipVariants: Variants = {
+    initial: { opacity: 0, y: 8 },
+    animate: (isClick: boolean) =>
+      isClick
+        ? { opacity: 1, y: -8, transition: { duration: 0.22, ease: [0.2, 0.9, 0.3, 1] } } // fade up on click
+        : { opacity: 1, y: 0, transition: { duration: 0.18, ease: [0.2, 0.9, 0.3, 1] } }, // subtle appearance on hover
+    exit: { opacity: 0, y: 8, transition: { duration: 0.12 } },
+  };
+
   /* -------------------------
-    Reveal config (mount letters over time)
+    Reveal text animation (same as before)
   --------------------------*/
-  const stagger = 0.02; // seconds per character
-  const initialDelay = 0.12; // seconds before first character
-  const interParagraphGap = 0.12; // seconds between para1 end and para2 start
+  const stagger = 0.02;
+  const initialDelay = 0.12;
+  const interParagraphGap = 0.12;
 
   const para1 =
     "We’re not your typical HR firm. ZaroHR helps you streamline, automate, and elevate your people operations — from offer to exit — so you can focus on growth, not grunt work.";
   const para2 =
     "With the right blend of technology, data, and human insight, we turn HR from a process problem into a measurable performance advantage.";
 
-  // compute gap steps and totals
   const gapSteps = Math.round(interParagraphGap / stagger);
   const totalSteps = para1.length + gapSteps + para2.length;
 
-  // revealedStep increments over time; we mount characters only up to revealedStep
   const [revealedStep, setRevealedStep] = useState<number>(0);
   const rafRef = useRef<number | null>(null);
   const startTimeRef = useRef<number | null>(null);
@@ -136,9 +222,8 @@ export default function Hero() {
       startTimeRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [contentVisible]); // start when contentVisible becomes true
+  }, [contentVisible]);
 
-  // compute how many chars from each paragraph to show
   const para1Count = Math.min(para1.length, revealedStep);
   const afterPara1 = Math.max(0, revealedStep - para1.length);
   const para2Count = Math.max(0, Math.min(para2.length, afterPara1 - gapSteps));
@@ -146,26 +231,40 @@ export default function Hero() {
   const showPara1Count = reducedMotion ? para1.length : para1Count;
   const showPara2Count = reducedMotion ? para2.length : para2Count;
 
-  // render only mounted characters (so paragraph height grows as chars mount)
   function renderParaCharsMounted(text: string, count: number) {
     return text
       .split("")
       .slice(0, count)
-      .map((ch, i) => {
-        // render normally (spaces intact) and allow wrapping
-        return (
-          <motion.span
-            key={`char-${i}-${ch}`}
-            initial={{ opacity: 0, y: 6 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-            className="inline"
-          >
-            {ch}
-          </motion.span>
-        );
-      });
+      .map((ch, i) => (
+        <motion.span
+          key={`char-${i}-${ch}`}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
+          className="inline"
+        >
+          {ch}
+        </motion.span>
+      ));
   }
+
+  // clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (popupTimerRef.current) {
+        window.clearTimeout(popupTimerRef.current);
+        popupTimerRef.current = null;
+      }
+      if (tooltipTimerRef.current) {
+        window.clearTimeout(tooltipTimerRef.current);
+        tooltipTimerRef.current = null;
+      }
+      if (rafRef.current) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+    };
+  }, []);
 
   return (
     <section className="relative w-full min-h-[90vh] flex items-center overflow-hidden" aria-label="ZaroHR hero">
@@ -196,7 +295,7 @@ export default function Hero() {
         }}
       />
 
-      {/* Splash: use AnimatePresence and reveal main content only after exit completes */}
+      {/* Splash */}
       <AnimatePresence onExitComplete={() => setContentVisible(true)}>
         {showSplash && !reducedMotion && (
           <motion.div
@@ -213,16 +312,16 @@ export default function Hero() {
                 className="text-base sm:text-xl font-semibold text-white/95 mb-2"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 0.95 }}
-                transition={{ duration: 0.28 }}
+                transition={{ duration: 0.6 }}
               >
                 Welcome to
               </motion.p>
 
               <motion.h2
                 className="text-4xl sm:text-6xl font-extrabold text-white drop-shadow-lg"
-                initial={{ scale: 0.995 }}
+                initial={{ scale: 0.992 }}
                 animate={{ scale: 1 }}
-                transition={{ duration: 0.45 }}
+                transition={{ duration: 0.9 }}
               >
                 Zaro<span className=" text-amber-400 bg-clip-text">HR</span>
               </motion.h2>
@@ -231,7 +330,7 @@ export default function Hero() {
                 className="text-lg sm:text-2xl font-semibold text-white/95 mt-3 -tracking-wide"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ duration: 0.35 }}
+                transition={{ duration: 0.6 }}
               >
                 Cut Through the Clutter. <span className="hidden sm:inline">Power What’s Next.</span>
               </motion.p>
@@ -240,7 +339,7 @@ export default function Hero() {
         )}
       </AnimatePresence>
 
-      {/* Main content: render only when contentVisible */}
+      {/* Main content */}
       {contentVisible && (
         <motion.div
           className="relative z-20 w-full px-6 md:px-12 lg:px-20"
@@ -252,10 +351,7 @@ export default function Hero() {
           <div className="max-w-3xl">
             {/* Headline */}
             <motion.header variants={itemVariants} className="mb-6">
-              <motion.h1
-                variants={itemVariants}
-                className="text-3xl sm:text-5xl font-extrabold text-white leading-tight"
-              >
+              <motion.h1 variants={itemVariants} className="text-3xl sm:text-5xl font-extrabold text-white leading-tight">
                 Zaro
                 <span className="text-amber-400 bg-clip-text">HR</span>
               </motion.h1>
@@ -264,11 +360,11 @@ export default function Hero() {
                 variants={itemVariants}
                 className="text-lg sm:text-2xl md:text-2xl font-semibold text-white/95 mt-3 -tracking-wide"
               >
-                Cut Through the Clutter. <span className="hidden sm:inline">Power What’s Next.</span>
+                Your HR efficiency journey starts here..
               </motion.p>
             </motion.header>
 
-            {/* Description: two paragraphs — mounted characters grow the paragraph */}
+            {/* Description */}
             <motion.div
               variants={itemVariants}
               className="mb-4 text-white/90 leading-relaxed prose prose-invert max-w-prose"
@@ -291,14 +387,14 @@ export default function Hero() {
               )}
             </motion.div>
 
-            {/* Email CTA (starts flush underneath heading; will be pushed down naturally) */}
+            {/* Email CTA */}
             <motion.form
               onSubmit={(e) => {
                 e.preventDefault();
                 handleSubmit(e);
               }}
               variants={itemVariants}
-              className="w-full max-w-md flex items-center gap-4 bg-white/6 border border-white/12 rounded-full p-2 shadow-sm"
+              className="w-full max-w-md flex items-center gap-4 bg-white/6 border border-white/12 rounded-full p-2 shadow-sm relative"
               aria-label="Get started with ZaroHR"
             >
               <div className="relative flex-1">
@@ -308,6 +404,7 @@ export default function Hero() {
                 </label>
                 <input
                   id="hero-email"
+                  ref={inputRef}
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   type="email"
@@ -316,18 +413,93 @@ export default function Hero() {
                 />
               </div>
 
-              <button
-                type="submit"
-                className="h-12 px-6 rounded-full bg-amber-400 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-cc-accent/30"
-                aria-pressed={status === "sent"}
+              <div
+                className="relative flex items-center"
+                // keep the tooltip logic tied to this wrapper
+                onMouseEnter={() => {
+                  // small delay to avoid flicker if needed
+                  if (tooltipTimerRef.current) window.clearTimeout(tooltipTimerRef.current);
+                  // entering via hover -> not a click variant
+                  tooltipTimerRef.current = window.setTimeout(() => {
+                    setShowTooltip(true);
+                    setShowTooltipClick(false);
+                  }, 70);
+                }}
+                onMouseLeave={() => {
+                  if (tooltipTimerRef.current) window.clearTimeout(tooltipTimerRef.current);
+                  // small delay so tooltip doesn't vanish immediately
+                  tooltipTimerRef.current = window.setTimeout(() => {
+                    setShowTooltip(false);
+                    setShowTooltipClick(false);
+                  }, 80);
+                }}
               >
-                {status === "sent" ? "Thanks — we'll reach out" : "Get started"}
-              </button>
-            </motion.form>
+                <button
+                  type="submit"
+                  onClick={() => {
+                    // show click tooltip immediately (fade up)
+                    showTooltipForClick();
+                  }}
+                  className="h-12 px-6 rounded-full bg-amber-400 text-black font-semibold shadow-sm hover:scale-[1.02] transition-transform focus:outline-none focus:ring-4 focus:ring-cc-accent/30 hover:bg-white transition"
+                  aria-pressed={status === "sent"}
+                >
+                  {status === "sent" ? "Thanks — we'll reach out" : "Get started"}
+                </button>
 
-            <motion.p variants={itemVariants} className="text-sm text-white/70 mt-4 max-w-md">
-              No spam — just a quick intro and optional product walkthrough.
-            </motion.p>
+                {/* Hover/Click Tooltip (centered under button).
+                    We hide tooltip while popup is visible so both don't show together */}
+                <AnimatePresence>
+                  {showTooltip && !showPopup && (
+                    <motion.div
+                      key="hover-tooltip"
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      variants={tooltipVariants}
+                      custom={showTooltipClick}
+                      className="absolute left-1/2 -translate-x-1/2 top-full mt-3 pointer-events-none z-40"
+                      aria-hidden={!showTooltip}
+                    >
+                      <div className="bg-amber-400 text-black font-semibold text-xs px-3 py-1.5 rounded-md shadow-lg whitespace-nowrap">
+                        Ready to tidy up HR?
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                {/* Inline animated error popup: appears below the button */}
+                <AnimatePresence>
+                  {showPopup && (
+                    <motion.div
+                      key="email-popup"
+                      initial="initial"
+                      animate="animate"
+                      exit="exit"
+                      variants={popupVariants}
+                      className="absolute right-0 top-full mt-3 w-72 sm:w-80 pointer-events-auto z-50"
+                      role="alert"
+                      aria-live="assertive"
+                    >
+                      <div className="bg-rose-600/95 text-white rounded-xl px-4 py-3 shadow-lg border border-rose-500">
+                        <div className="flex items-start gap-3">
+                          <div className="flex-1">
+                            <p className="font-semibold text-sm">Please enter a valid work email</p>
+                            <p className="text-xs opacity-90 mt-1">We need your email to start the conversation</p>
+                          </div>
+                          <button
+                            onClick={() => dismissPopup()}
+                            aria-label="Dismiss"
+                            className="ml-2 text-white/85 hover:text-white/95 focus:outline-none"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            </motion.form>
           </div>
         </motion.div>
       )}

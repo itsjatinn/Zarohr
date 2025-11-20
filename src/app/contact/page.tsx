@@ -198,7 +198,7 @@ export default function ContactPage() {
           <div className="mx-auto w-full max-w-3xl rounded-2xl bg-white shadow-xl ring-1 ring-neutral-200">
             {/* Header */}
             <div className="px-6 sm:px-8 pt-8 text-center">
-              <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">Send us a message</h2>
+              <h2 className="text-2xl font-semibold tracking-tight text-neutral-900">Book a Consultation</h2>
               <p className="mt-1 text-sm text-neutral-600">We typically reply within 1 business day.</p>
             </div>
 
@@ -270,7 +270,7 @@ export default function ContactPage() {
 
                 <div className="flex flex-col">
                   <label htmlFor="phone" className="mb-1 text-sm font-medium text-neutral-800">
-                    Phone
+                    Phone <span className="text-red-500">*</span>
                   </label>
                   <input
                     id="phone"
@@ -288,7 +288,7 @@ export default function ContactPage() {
               {/* Message */}
               <div className="flex flex-col">
                 <label htmlFor="message" className="mb-1 text-sm font-medium text-neutral-800">
-                  Message <span className="text-red-500">*</span>
+                  Message 
                 </label>
                 <textarea
                   id="message"

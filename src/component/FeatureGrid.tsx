@@ -49,7 +49,7 @@ export default function FeatureGrid() {
       title: "Mandatory Trainings",
       desc: "POSH, AML and more — with automated reminders & dashboards.",
       icon: <ShieldCheck className="w-5 h-5 text-black" />,
-      href: "https://compliance-portal-tau.vercel.app/",
+      href: "https://lms.zarohr.com/",
       live: true, // mark as live
     },
     // NEW: Compensation & Benefits

@@ -24,7 +24,7 @@ export default function Footer() {
             Terms
           </a>
           <a
-            href="/comingsoon"
+            href="/contact"
             className="text-slate-500 hover:text-slate-950 transition-colors duration-200"
           >
             Contact

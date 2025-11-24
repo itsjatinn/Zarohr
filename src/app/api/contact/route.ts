@@ -12,9 +12,14 @@ const {
   CONTACT_FROM_EMAIL,
 } = process.env;
 
-// Local image (you uploaded). The platform will transform this local path to a URL when sending.
-// If you don't want an image, remove IMAGE_URL and the <img> tag in htmlBody.
-const IMAGE_URL = "/mnt/data/c6c71ded-c3b7-405b-8751-8da5f7309073.png";
+function formatError(e: unknown) {
+  if (e instanceof Error) return `${e.name}: ${e.message}\n${e.stack ?? ""}`;
+  try {
+    return JSON.stringify(e);
+  } catch {
+    return String(e);
+  }
+}
 
 function validateEmail(e: unknown) {
   return typeof e === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
@@ -43,8 +48,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Server not configured." }, { status: 500 });
     }
 
-    const body = await req.json().catch(() => ({}));
-    const { name, company = "", email, phone = "", message } = body ?? {};
+    const body = await req.json().catch(() => ({} as Record<string, unknown>));
+    const {
+      name,
+      company = "",
+      email,
+      phone = "",
+      message,
+    } = (body ?? {}) as {
+      name?: unknown;
+      company?: unknown;
+      email?: unknown;
+      phone?: unknown;
+      message?: unknown;
+    };
 
     // Basic validation
     if (!name || typeof name !== "string" || !name.trim()) {
@@ -86,13 +103,13 @@ ${message}
     const htmlBody = `
       <div style="font-family:system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
         <h2>New contact form submission</h2>
-        <p><strong>Name:</strong> ${escapeHtml(name)}</p>
-        <p><strong>Company:</strong> ${escapeHtml(company)}</p>
-        <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-        <p><strong>Phone:</strong> ${escapeHtml(phone)}</p>
+        <p><strong>Name:</strong> ${escapeHtml(String(name))}</p>
+        <p><strong>Company:</strong> ${escapeHtml(String(company))}</p>
+        <p><strong>Email:</strong> ${escapeHtml(String(email))}</p>
+        <p><strong>Phone:</strong> ${escapeHtml(String(phone))}</p>
         <hr/>
         <p><strong>Message:</strong></p>
-        <p>${nl2br(message)}</p>
+        <p>${nl2br(String(message))}</p>
         <hr/>
         <p style="font-size:12px;color:#666">Sent from your website contact form</p>
       </div>
@@ -102,21 +119,21 @@ ${message}
     await transporter.sendMail({
       from: CONTACT_FROM_EMAIL,
       to: CONTACT_TO_EMAIL,
-      subject: `[Contact] New inquiry — ${name}`,
+      subject: `[Contact] New inquiry — ${String(name)}`,
       text: plainText,
       html: htmlBody,
-      replyTo: email,
+      replyTo: String(email),
     });
 
     // Compose an instant auto-reply to the sender
     const autoReplyPlain = `
-Hi ${name},
+Hi ${String(name)},
 
 Thanks for reaching out to ZaroHR Solutions. We have received your message and will get back to you within 1 business day.
 
 For reference, here is a copy of your message:
 ---------------------------------------------
-${message}
+${String(message)}
 ---------------------------------------------
 
 If this is urgent, you can call us at +91 98335 76742.
@@ -127,12 +144,12 @@ ZaroHR Solutions
 
     const autoReplyHtml = `
       <div style="font-family:system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial; color:#111;">
-        <p>Hi ${escapeHtml(name)},</p>
+        <p>Hi ${escapeHtml(String(name))},</p>
         <p>Thanks for reaching out to <strong>ZaroHR Solutions</strong>. We have received your message and will get back to you within <strong>1 business day</strong>.</p>
         <hr/>
         <p><strong>Your message (copy):</strong></p>
         <div style="padding:12px;border-radius:8px;background:#f7f7f7;border:1px solid #eee;">
-          <p style="white-space:pre-wrap; margin:0;">${escapeHtml(message)}</p>
+          <p style="white-space:pre-wrap; margin:0;">${escapeHtml(String(message))}</p>
         </div>
         <hr/>
         <p>If this is urgent, you can call us at <a href="tel:+919833576742">+91 98335 76742</a>.</p>
@@ -145,20 +162,20 @@ ZaroHR Solutions
     try {
       await transporter.sendMail({
         from: CONTACT_FROM_EMAIL,
-        to: email,
+        to: String(email),
         subject: `We received your message — ZaroHR Solutions`,
         text: autoReplyPlain,
         html: autoReplyHtml,
         replyTo: CONTACT_FROM_EMAIL,
       });
-    } catch (autoErr) {
-      console.error("Failed to send auto-reply to sender:", autoErr);
+    } catch (autoErr: unknown) {
+      console.error("Failed to send auto-reply to sender:", formatError(autoErr));
       // do not return error — owner mail already sent successfully
     }
 
     return NextResponse.json({ message: "Message sent — thank you!" });
-  } catch (err: any) {
-    console.error("contact API error:", err);
+  } catch (err: unknown) {
+    console.error("contact API error:", formatError(err));
     return NextResponse.json({ error: "Failed to send message." }, { status: 500 });
   }
 }

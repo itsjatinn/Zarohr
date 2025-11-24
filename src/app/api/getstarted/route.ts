@@ -12,6 +12,15 @@ const {
   SURVEY_FROM_EMAIL,
 } = process.env;
 
+function formatError(e: unknown) {
+  if (e instanceof Error) return `${e.name}: ${e.message}\n${e.stack ?? ""}`;
+  try {
+    return JSON.stringify(e);
+  } catch {
+    return String(e);
+  }
+}
+
 function validateEmail(e: unknown) {
   return typeof e === "string" && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 }
@@ -37,8 +46,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Server not configured." }, { status: 500 });
     }
 
-    const body = await req.json().catch(() => ({}));
-    // expected shape similar to your FormState
+    const body = await req.json().catch(() => ({} as Record<string, unknown>));
+
     const {
       orgName = "",
       
@@ -48,9 +57,30 @@ export async function POST(req: NextRequest) {
       contactEmail = "",
       contactNumber = "",
       priorities = [],
+     
       painPoints = "",
+     
+      
+      
+      
       consent = false,
-    } = body ?? {};
+    } = (body ?? {}) as {
+      orgName?: unknown;
+      website?: unknown;
+      size?: unknown;
+      industry?: unknown;
+      contactName?: unknown;
+      contactEmail?: unknown;
+      contactNumber?: unknown;
+      priorities?: unknown;
+      currentTools?: unknown;
+      painPoints?: unknown;
+      mustHaves?: unknown;
+      timeline?: unknown;
+      budget?: unknown;
+      additional?: unknown;
+      consent?: unknown;
+    };
 
     // Validation
     if (!orgName || typeof orgName !== "string" || !orgName.trim()) {
@@ -85,7 +115,6 @@ Organization: ${orgName}
 
 Size: ${size}
 
-
 Contact person: ${contactName}
 Contact email: ${contactEmail}
 Contact number: ${contactNumber}
@@ -94,9 +123,6 @@ Priorities: ${Array.isArray(priorities) ? priorities.join(", ") : String(priorit
 
 Pain points: ${painPoints}
 
-
-
-
 Consent to contact: ${consent ? "Yes" : "No"}
 `.trim();
 
@@ -104,18 +130,19 @@ Consent to contact: ${consent ? "Yes" : "No"}
     const ownerHtml = `
       <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;">
         <h2>New Get Started submission</h2>
-        <p><strong>Organization:</strong> ${escapeHtml(orgName)}</p>
+        <p><strong>Organization:</strong> ${escapeHtml(String(orgName))}</p>
         
-        <p><strong>Size:</strong> ${escapeHtml(size)}</p>
-       
+        <p><strong>Size:</strong> ${escapeHtml(String(size || ""))}</p>
+        
         <hr/>
-        <p><strong>Contact person:</strong> ${escapeHtml(contactName)}</p>
-        <p><strong>Contact email:</strong> ${escapeHtml(contactEmail)}</p>
-        <p><strong>Contact number:</strong> ${escapeHtml(contactNumber)}</p>
-        <p><strong>Priorities:</strong> ${escapeHtml(Array.isArray(priorities) ? priorities.join(", ") : String(priorities))}</p>
-    
-        <p><strong>Pain points:</strong><br/>${nl2br(painPoints)}</p>
-       
+        <p><strong>Contact person:</strong> ${escapeHtml(String(contactName || ""))}</p>
+        <p><strong>Contact email:</strong> ${escapeHtml(String(contactEmail || ""))}</p>
+        <p><strong>Contact number:</strong> ${escapeHtml(String(contactNumber || ""))}</p>
+        <p><strong>Priorities:</strong> ${escapeHtml(Array.isArray(priorities) ? priorities.join(", ") : String(priorities || ""))}</p>
+        
+        <p><strong>Pain points:</strong><br/>${nl2br(String(painPoints || ""))}</p>
+        
+        
         <hr/>
         <p><em>Consent to contact:</em> ${consent ? "Yes" : "No"}</p>
         <p style="font-size:12px;color:#666">Submitted from ZaroHR GetStarted form</p>
@@ -126,10 +153,10 @@ Consent to contact: ${consent ? "Yes" : "No"}
     await transporter.sendMail({
       from: SURVEY_FROM_EMAIL,
       to: SURVEY_TO_EMAIL,
-      subject: `[Get Started] ${orgName} — survey submission`,
+      subject: `[Get Started] ${String(orgName)} — survey submission`,
       text: ownerPlain,
       html: ownerHtml,
-      replyTo: contactEmail,
+      replyTo: String(contactEmail),
     });
 
     // Auto-reply to submitter (non-blocking)
@@ -149,12 +176,12 @@ ZaroHR Solutions
 
     const autoHtml = `
       <div style="font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial; color:#111;">
-        <p>Hi ${escapeHtml(contactName || "")},</p>
-        <p>Thanks for sharing details about <strong>${escapeHtml(orgName)}</strong>. We have received your submission and will get back to you within <strong>1 business day</strong>.</p>
+        <p>Hi ${escapeHtml(String(contactName || ""))},</p>
+        <p>Thanks for sharing details about <strong>${escapeHtml(String(orgName))}</strong>. We have received your submission and will get back to you within <strong>1 business day</strong>.</p>
         <hr/>
         <p><strong>Your notes (copy):</strong></p>
         <div style="padding:12px;border-radius:8px;background:#f7f7f7;border:1px solid #eee;">
-          <p style="white-space:pre-wrap;margin:0;">${escapeHtml(painPoints || "—")}</p>
+          <p style="white-space:pre-wrap;margin:0;">${escapeHtml(String(painPoints || "—"))}</p>
         </div>
         <hr/>
         <p>If this is urgent, you can call us at <a href="tel:+919833576742">+91 98335 76742</a>.</p>
@@ -166,20 +193,20 @@ ZaroHR Solutions
     try {
       await transporter.sendMail({
         from: SURVEY_FROM_EMAIL,
-        to: contactEmail,
-        subject: `We received your request — ${orgName}`,
+        to: String(contactEmail),
+        subject: `We received your request — ${String(orgName)}`,
         text: autoPlain,
         html: autoHtml,
         replyTo: SURVEY_FROM_EMAIL,
       });
-    } catch (autoErr) {
-      console.error("Auto-reply failed:", autoErr);
+    } catch (autoErr: unknown) {
+      console.error("Auto-reply failed:", formatError(autoErr));
       // don't fail the whole request if auto-reply fails
     }
 
     return NextResponse.json({ message: "Submission received. Thank you!" });
-  } catch (err: any) {
-    console.error("survey API error:", err);
+  } catch (err: unknown) {
+    console.error("survey API error:", formatError(err));
     return NextResponse.json({ error: "Failed to submit form." }, { status: 500 });
   }
 }

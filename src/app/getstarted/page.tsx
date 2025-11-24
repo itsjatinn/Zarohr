@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, JSX } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 
 // Single-file React component for the Get Started survey (Client component)
@@ -25,7 +25,7 @@ type FormState = {
   consent: boolean;
 };
 
-export default function GetStartedSurvey(): JSX.Element {
+export default function GetStartedSurvey(): React.JSX.Element {
   const [form, setForm] = useState<FormState>({
     orgName: "",
     website: "",
@@ -78,12 +78,13 @@ export default function GetStartedSurvey(): JSX.Element {
     }));
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) {
+  function handleChange(
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) {
     const target = e.target as HTMLInputElement;
     const { name, type } = target;
     let value: string | boolean = (e.target as HTMLInputElement).value as string;
     if (type === "checkbox") {
-      // checkbox may be the consent checkbox or others in future
       value = (e.target as HTMLInputElement).checked;
       if (name === "consent") {
         setForm((s) => ({ ...s, consent: value as boolean }));
@@ -98,10 +99,10 @@ export default function GetStartedSurvey(): JSX.Element {
     setStatus(null);
 
     // Basic validation
-      if (!form.contactEmail || !form.contactNumber || !form.orgName) {
+    if (!form.contactEmail || !form.contactNumber || !form.orgName) {
       setStatus({
-      ok: false,
-      msg: "Please provide organization name, contact email, and contact number.",
+        ok: false,
+        msg: "Please provide organization name, contact email, and contact number.",
       });
       return;
     }
@@ -114,14 +115,14 @@ export default function GetStartedSurvey(): JSX.Element {
     setSubmitting(true);
     try {
       // Replace this URL with your API route (e.g. /api/survey)
-      const res = await fetch("/api/survey", {
+      const res = await fetch("/api/getstarted", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       if (res.ok) {
-        setStatus({ ok: true, msg: "Thanks — we received your requirements. We&apos;ll be in touch!" });
+        setStatus({ ok: true, msg: "Thanks — we received your requirements. We'll be in touch!" });
         // reset form
         setForm({
           orgName: "",
@@ -196,11 +197,7 @@ export default function GetStartedSurvey(): JSX.Element {
                   <option>1000+</option>
                 </select>
               </label>
-
-              
             </div>
-
-            
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <label className="flex flex-col">
@@ -245,6 +242,7 @@ export default function GetStartedSurvey(): JSX.Element {
                   <label key={o} className="flex items-center gap-3">
                     <input
                       type="checkbox"
+                      name="priorities"
                       checked={form.priorities.includes(o)}
                       onChange={() => togglePriority(o)}
                       className="w-4 h-4 rounded text-amber-400 bg-gray-800"
@@ -254,8 +252,6 @@ export default function GetStartedSurvey(): JSX.Element {
                 ))}
               </div>
             </fieldset>
-
-            
 
             <label className="flex flex-col">
               <span className="text-sm text-gray-300">Biggest HR pain points</span>
@@ -268,8 +264,6 @@ export default function GetStartedSurvey(): JSX.Element {
                 placeholder="Describe the main issues your team faces"
               />
             </label>
-
-            
 
             <div className="flex items-start gap-3">
               <input
@@ -319,10 +313,9 @@ export default function GetStartedSurvey(): JSX.Element {
             <ol className="list-decimal pl-5 text-gray-300 text-sm space-y-2">
               <li>Mention any payroll or compliance constraints.</li>
               <li>List the HR tools you currently use (or Excel!).</li>
-              
             </ol>
 
-            <div className="mt-3 text-xs text-gray-500">Book a consaltant- Email <a href="mailto:sales@yourdomain.com" className="text-amber-300">info@zarohr.com</a></div>
+            <div className="mt-3 text-xs text-gray-500">Book a consultant — Email <a href="mailto:info@zarohr.com" className="text-amber-300">info@zarohr.com</a></div>
           </aside>
         </form>
       </div>

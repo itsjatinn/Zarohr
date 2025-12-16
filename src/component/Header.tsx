@@ -20,11 +20,7 @@ import { Home, Briefcase, Newspaper, Phone, Rocket, Menu, X } from "lucide-react
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const isClient = typeof window !== "undefined";
 
   // Lock scroll when menu open (cleanup returns void)
   useEffect(() => {
@@ -181,7 +177,7 @@ export default function Header() {
       </header>
 
       {/* Drawer via Portal */}
-      {mounted &&
+      {isClient &&
         createPortal(
           <AnimatePresence>
             {open && (

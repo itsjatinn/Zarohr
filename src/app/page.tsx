@@ -3,7 +3,7 @@ import Hero from "../component/Hero";
 import FeatureGrid from "../component/FeatureGrid";
 
 export const metadata: Metadata = {
-  title: "Fractional HR Partner for Fast-Scaling Teams",
+  title: "ZaroHR",
   description:
     "ZaroHR streamlines onboarding, payroll, compliance trainings, and analytics so founders and HR leaders can focus on growth instead of manual work.",
   alternates: {

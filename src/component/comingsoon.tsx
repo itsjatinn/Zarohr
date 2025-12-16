@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useMemo } from "react";
+import React from "react";
 import { motion } from "framer-motion";
-import { ExternalLink } from "lucide-react";
 
 export default function ComingSoonPage() {
   // Palette and tone intentionally aligned with your hero component:
@@ -69,18 +68,6 @@ export default function ComingSoonPage() {
       {/* soft vignette */}
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-black/40 to-black/70" />
     </div>
-  );
-}
-
-function SocialPill({ label, href }: { label: string; href: string }) {
-  return (
-    <a
-      href={href}
-      onClick={(e) => e.preventDefault()}
-      className="inline-flex items-center gap-2 rounded-full px-3 py-1 bg-white/6 text-xs text-slate-200 hover:bg-white/8 transition"
-    >
-      {label}
-    </a>
   );
 }
 
